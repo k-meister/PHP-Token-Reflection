@@ -1,9 +1,9 @@
 {
-	"name": "andrewsville/php-token-reflection",
+	"name": "k-meister/php-token-reflection",
 	"type": "library",
-	"description": "Library emulating the PHP internal reflection using just the tokenized source code.",
+	"description": "Forked by k-meister: Library emulating the PHP internal reflection using just the tokenized source code.",
 	"keywords": ["library", "tokenizer", "reflection"],
-	"homepage": "http://andrewsville.github.com/PHP-Token-Reflection/",
+	"homepage": "http://github.com/k-meister/PHP-Token-Reflection/",
 	"license": "BSD-3",
 
 	"authors": [
