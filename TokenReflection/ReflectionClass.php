@@ -695,6 +695,34 @@ class ReflectionClass extends ReflectionElement implements IReflectionClass
 	public function getTraitMethods($filter = null)
 	{
 		$methods = array();
+		$parentMethods = [];
+		if(!is_null($this->parentClassName)){
+			foreach ($this->getParentClass()->getMethods(null) as $parentMethod)
+				$parentMethods[$parentMethod->getName()] = $parentMethod;
+		};
+
+		$selector = function ($currentMethod, $existingMethod, $ownMethod, $parentMethod){
+			/** @var ReflectionMethod|null $existingMethod */
+			/** @var ReflectionMethod $currentMethod */
+			/** @var ReflectionMethod|null $parentMethod */
+			/** @var ReflectionMethod|null $ownMethod */
+			if (!is_null($ownMethod))
+				return null;
+
+			if (is_null($existingMethod) || $existingMethod->isAbstract()){
+				if (!$currentMethod->isAbstract())
+					return $currentMethod;
+				if (!is_null($parentMethod))
+					return null;
+
+				return $currentMethod;
+			}
+
+			if (!$currentMethod->isAbstract()){
+				throw new Exception\RuntimeException(sprintf('Trait method "%s" was already imported.', $existingMethod->getName()), Exception\RuntimeException::ALREADY_EXISTS, $this);
+			}
+			return $existingMethod;
+		};
 
 		foreach ($this->getOwnTraits() as $trait) {
 			$traitName = $trait->getName();
@@ -718,23 +746,35 @@ class ReflectionClass extends ReflectionElement implements IReflectionClass
 							$imports[] = null;
 						}
 
-						if (!isset($this->methods[$newName])) {
-							if (isset($methods[$newName])) {
-								throw new Exception\RuntimeException(sprintf('Trait method "%s" was already imported.', $newName), Exception\RuntimeException::ALREADY_EXISTS, $this);
-							}
+						/** @var ReflectionMethod $existingMethod */
+						$existingMethod = isset($methods[$newName]) ? $methods[$newName] : null;
+						/** @var ReflectionMethod|null $parentMethod */
+						$parentMethod = isset($parentMethods[$newName]) ? $parentMethods[$newName] : null;
+						/** @var ReflectionMethod|null $ownMethod */
+						$ownMethod = isset($this->methods[$newName]) ? $this->methods[$newName] : null;
+						/** @var ReflectionMethod $currentMethod */
+						$currentMethod = $traitMethod->alias($this, $newName, $accessLevel);
 
-							$methods[$newName] = $traitMethod->alias($this, $newName, $accessLevel);
+						$selectedMethod = $selector($currentMethod, $existingMethod, $ownMethod, $parentMethod);
+						if (!is_null($selectedMethod)){
+							$methods[$newName] = $selectedMethod;
 						}
 					}
 				}
 
 				if (!in_array(null, $imports)) {
-					if (!isset($this->methods[$methodName])) {
-						if (isset($methods[$methodName])) {
-							throw new Exception\RuntimeException(sprintf('Trait method "%s" was already imported.', $methodName), Exception\RuntimeException::ALREADY_EXISTS, $this);
-						}
+					/** @var ReflectionMethod $existingMethod */
+					$existingMethod = isset($methods[$methodName]) ? $methods[$methodName] : null;
+					/** @var ReflectionMethod|null $parentMethod */
+					$parentMethod = isset($parentMethods[$methodName]) ? $parentMethods[$methodName] : null;
+					/** @var ReflectionMethod|null $ownMethod */
+					$ownMethod = isset($this->methods[$methodName]) ? $this->methods[$methodName] : null;
+					/** @var ReflectionMethod $currentMethod */
+					$currentMethod = $traitMethod->alias($this);
 
-						$methods[$methodName] = $traitMethod->alias($this);
+					$selectedMethod = $selector($traitMethod, $existingMethod, $ownMethod, $parentMethod);
+					if (!is_null($selectedMethod)){
+						$methods[$methodName] = $selectedMethod;
 					}
 				}
 			}

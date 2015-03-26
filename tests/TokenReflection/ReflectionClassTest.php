@@ -1368,7 +1368,8 @@ class ReflectionClassTest extends Test
 			'TokenReflection_Test_ClassTraits' => array(false, array('privatef2' => '(null)::publicf', 'publicf3' => '(null)::protectedf', 'publicfOriginal' => '(null)::publicf'), array('TokenReflection_Test_ClassTraitsTrait1'), array('TokenReflection_Test_ClassTraitsTrait1'), 6, 6),
 			'TokenReflection_Test_ClassTraits2' => array(false, array(), array('TokenReflection_Test_ClassTraitsTrait2'), array('TokenReflection_Test_ClassTraitsTrait2'), 6, 3),
 			'TokenReflection_Test_ClassTraits3' => array(false, array(), array('TokenReflection_Test_ClassTraitsTrait1'), array('TokenReflection_Test_ClassTraitsTrait1'), 6, 2),
-			'TokenReflection_Test_ClassTraits4' => array(false, array(), array('TokenReflection_Test_ClassTraitsTrait3', 'TokenReflection_Test_ClassTraitsTrait4'), array('TokenReflection_Test_ClassTraitsTrait3', 'TokenReflection_Test_ClassTraitsTrait4'), 2, 1)
+			'TokenReflection_Test_ClassTraits4' => array(false, array(), array('TokenReflection_Test_ClassTraitsTrait3', 'TokenReflection_Test_ClassTraitsTrait4'), array('TokenReflection_Test_ClassTraitsTrait3', 'TokenReflection_Test_ClassTraitsTrait4'), 2, 1),
+			'TokenReflection_Test_ClassTraits6' => array(false, array(), array('TokenReflection_Test_ClassTraitsTrait5', 'TokenReflection_Test_ClassTraitsTrait6'), array('TokenReflection_Test_ClassTraitsTrait5', 'TokenReflection_Test_ClassTraitsTrait6'), 0, 1)
 		);
 
 		$this->getBroker()->process($this->getFilePath('traits'));

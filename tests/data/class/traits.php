@@ -38,6 +38,16 @@ trait TokenReflection_Test_ClassTraitsTrait4 {
 	private function privatef() {}
 }
 
+trait TokenReflection_Test_ClassTraitsTrait5 {
+	abstract public function publicf();
+	abstract protected function protectedf();
+}
+
+trait TokenReflection_Test_ClassTraitsTrait6 {
+	abstract public function publicf();
+	protected function protectedf() {}
+}
+
 class TokenReflection_Test_ClassTraits {
 	use TokenReflection_Test_ClassTraitsTrait1 {publicf as private privatef2; protectedf as public publicf3; publicf as publicfOriginal;}
 
@@ -61,3 +71,16 @@ class TokenReflection_Test_ClassTraits4 {
 	use TokenReflection_Test_ClassTraitsTrait4 {TokenReflection_Test_ClassTraitsTrait4::privatef insteadof TokenReflection_Test_ClassTraitsTrait3;}
 }
 
+abstract class TokenReflection_Test_ClassTraits5 {
+	public function publicf() {}
+	abstract protected function protectedf();
+}
+
+/**
+ * publicf method here comes from parent class,
+ * protectedf method here is imported from trait 6.
+ */
+class TokenReflection_Test_ClassTraits6 extends TokenReflection_Test_ClassTraits5{
+	use TokenReflection_Test_ClassTraitsTrait5;
+	use TokenReflection_Test_ClassTraitsTrait6;
+}
